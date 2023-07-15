@@ -165,108 +165,290 @@ procedure AnadirClienteInd();
 		
 		Close(ArchivoIndividuales);
 	end;
+
+
+function RepetidoGrup(Variable, Dato: string): boolean;
+	var
+		nCliente : Grupo;
 	
+	begin
+		RepetidoGrup := False;
+		AbrirArchivoGrup;
+		
+		if not eof(ArchivoGrupos) then
+		begin
+			case Variable of
+				'Registro':begin
+					while not eof(ArchivoGrupos) do
+					begin
+						read(ArchivoGrupos, nCliente);
+						
+						if nCliente.NumeroRegistro = Dato then
+						begin
+							RepetidoGrup := True;
+							break;
+						end;
+					end;
+				end;
+				'Cedula':begin
+					while not eof(ArchivoGrupos) do
+					begin
+						read(ArchivoGrupos, nCliente);
+						
+						if nCliente.Cedula = Dato then
+						begin
+							RepetidoGrup := True;
+							break;
+						end;
+					end;
+				end;
+			end;
+		end;
+		Close(ArchivoGrupos);
+	end;
+
+function RepetidoAcom(Variable, Dato: string): boolean;
+	var
+		nCliente : Individual;
+	
+	begin
+		RepetidoAcom := False;
+		AbrirArchivoAcom;
+		
+		if not eof(ArchivoAcompanyados) then
+		begin
+			case Variable of
+				'Registro':begin
+					while not eof(ArchivoAcompanyados) do
+					begin
+						read(ArchivoAcompanyados, nCliente);
+						
+						if nCliente.NumeroRegistro = Dato then
+						begin
+							RepetidoAcom := True;
+							break;
+						end;
+					end;
+				end;
+				'Cedula':begin
+					while not eof(ArchivoAcompanyados) do
+					begin
+						read(ArchivoAcompanyados, nCliente);
+						
+						if nCliente.Cedula = Dato then
+						begin
+							RepetidoAcom := True;
+							break;
+						end;
+					end;
+				end;
+			end;
+		end;
+		Close(ArchivoAcompanyados);
+	end;
+
+function RepetidoInd(Variable, Dato: string): boolean;
+	var
+		nCliente : Individual;
+	
+	begin
+		RepetidoInd := False;
+		AbrirArchivoInd;
+		
+		if not eof(ArchivoIndividuales) then
+		begin
+			case Variable of
+				'Registro':begin
+					while not eof(ArchivoIndividuales) do
+					begin
+						read(ArchivoIndividuales, nCliente);
+						
+						if nCliente.NumeroRegistro = Dato then
+						begin
+							RepetidoInd := True;
+							break;
+						end;
+					end;
+				end;
+				'Cedula':begin
+					while not eof(ArchivoIndividuales) do
+					begin
+						read(ArchivoIndividuales, nCliente);
+						
+						if nCliente.Cedula = Dato then
+						begin
+							RepetidoInd := True;
+							break;
+						end;
+					end;
+				end;
+			end;
+		end;
+		Close(ArchivoIndividuales);
+	end;
+
+function DatosReservacion(Dato: string): string;
+	var
+		ValorDato: string;
+	begin
+		clrscr;
+		case Dato of
+			'Registro': write('Ingrese Numero de Registro: ');
+			'Habitacion': write('Ingrese Tipo de Habitacion: ');
+			'Estadia': write('Ingrese Dias de Estadia: ');
+		end;
+		
+		readln(ValorDato);
+		DatosReservacion := ValorDato;
+	end;
+
 procedure CrearClienteGrupo();
 	var
 		i, nRegistros: byte;
+		Regis, Habi, Estad: string;
+		CedulaRepe, RegistroRepe: boolean;
 	
 	begin
-		write('Ingrese la cantidad de adultos: '); readln(nRegistros);
-		
-		
-		for i:=1 to nRegistros do
-		begin
+		repeat
+			Estad := DatosReservacion('Estadia');
+			Habi := DatosReservacion('Habitacion');
+			Regis := DatosReservacion('Registro');
+			
+			CedulaRepe := False;
+			RegistroRepe := False;
+			
 			clrscr;
-			writeln('Registro numero ',CantidadClientes);
+			write('Ingrese la cantidad de adultos: '); readln(nRegistros);
 			
-			write('Ingrese Nombre Completo: ');
-			readln(ListaGrupos[i].NombreC);
-			write('Ingrese Cedula: ');
-			readln(ListaGrupos[i].Cedula);
-			write('Ingrese Correo: ');
-			readln(ListaGrupos[i].Correo);
-			write('Ingrese Telefono: ');
-			readln(ListaGrupos[i].Telefono);
-			write('Ingrese Nombre del nino: ');
-			readln(ListaGrupos[i].NombreNino);
-			write('Ingrese Edad del nino: ');
-			readln(ListaGrupos[i].EdadNino);
-			write('Ingrese Dias de Estadia: ');
-			readln(ListaGrupos[i].Estadia);
-			ListaGrupos[i].Reservacion := TipoReser;
-			write('Ingrese Tipo de Habitacion: ');
-			readln(ListaGrupos[i].TipoHabitacion);
-			write('Ingrese Numero de Registro: ');
-			readln(ListaGrupos[i].NumeroRegistro);
 			
-			writeln();
-			writeln('Presione Enter para continuar');
-		end;
-		
-		readln();
+			for i:=1 to nRegistros do
+			begin
+				clrscr;
+				
+				write('Ingrese Nombre Completo: ');
+				readln(ListaGrupos[i].NombreC);
+				write('Ingrese Cedula: ');
+				readln(ListaGrupos[i].Cedula);
+				write('Ingrese Correo: ');
+				readln(ListaGrupos[i].Correo);
+				write('Ingrese Telefono: ');
+				readln(ListaGrupos[i].Telefono);
+				write('Ingrese Nombre del nino: ');
+				readln(ListaGrupos[i].NombreNino);
+				write('Ingrese Edad del nino: ');
+				readln(ListaGrupos[i].EdadNino);
+				ListaGrupos[i].Reservacion := TipoReser;
+				ListaGrupos[i].Estadia := Estad;
+				ListaGrupos[i].TipoHabitacion := Habi;
+				ListaGrupos[i].NumeroRegistro := Regis;
+				
+				writeln();
+				CedulaRepe := RepetidoGrup('Cedula', ListaGrupos[i].Cedula);
+				RegistroRepe := RepetidoGrup('Registro', ListaGrupos[i].NumeroRegistro);
+					
+				if CedulaRepe = True then writeln('Esta cedula ya se encuentra en el sistema, ingrese un cliente nuevo.');
+				if RegistroRepe = True then writeln('Este numero de registro ya existe, registre al usuario con otro numero.');
+				
+				writeln();
+				writeln('Presione Enter para continuar');
+				readln();
+				
+				if (CedulaRepe = True) or (RegistroRepe = True) then break;
+			end;
+		until (CedulaRepe = False) and (RegistroRepe = False);
 		AnadirClienteGrup(nRegistros);
 	end;
 
 procedure CrearClienteAcom();
 	var
 		i: byte;
+		Regis, Habi, Estad: string;
+		CedulaRepe, RegistroRepe: boolean;
 	
 	begin
-		for i:=1 to 2 do
-		begin
-			clrscr;
-			writeln('Registro numero ',CantidadClientes);
+		repeat
+			Estad := DatosReservacion('Estadia');
+			Habi := DatosReservacion('Habitacion');
+			Regis := DatosReservacion('Registro');
 			
-			write('Ingrese Nombre Completo: ');
-			readln(ListaAcompanyados[i].NombreC);
-			write('Ingrese Cedula: ');
-			readln(ListaAcompanyados[i].Cedula);
-			write('Ingrese Correo: ');
-			readln(ListaAcompanyados[i].Correo);
-			write('Ingrese Telefono: ');
-			readln(ListaAcompanyados[i].Telefono);
-			write('Ingrese Dias de Estadia: ');
-			readln(ListaAcompanyados[i].Estadia);
-			ListaAcompanyados[i].Reservacion := TipoReser;
-			write('Ingrese Tipo de Habitacion: ');
-			readln(ListaAcompanyados[i].TipoHabitacion);
-			write('Ingrese Numero de Registro: ');
-			readln(ListaAcompanyados[i].NumeroRegistro);
+			CedulaRepe := False;
+			RegistroRepe := False;
 			
-			writeln();
-			writeln('Presione Enter para continuar');
-		end;
-		
-		readln();
+			for i:=1 to 2 do
+			begin
+				clrscr;
+				
+				write('Ingrese Nombre Completo: ');
+				readln(ListaAcompanyados[i].NombreC);
+				write('Ingrese Cedula: ');
+				readln(ListaAcompanyados[i].Cedula);
+				write('Ingrese Correo: ');
+				readln(ListaAcompanyados[i].Correo);
+				write('Ingrese Telefono: ');
+				readln(ListaAcompanyados[i].Telefono);
+				ListaAcompanyados[i].Reservacion := TipoReser;
+				ListaAcompanyados[i].Estadia := Estad;
+				ListaAcompanyados[i].TipoHabitacion := Habi;
+				ListaAcompanyados[i].NumeroRegistro := Regis;
+				
+				writeln();
+				CedulaRepe := RepetidoAcom('Cedula', ListaAcompanyados[i].Cedula);
+				RegistroRepe := RepetidoAcom('Registro', ListaAcompanyados[i].NumeroRegistro);
+					
+				if CedulaRepe = True then writeln('Esta cedula ya se encuentra en el sistema, ingrese un cliente nuevo.');
+				if RegistroRepe = True then writeln('Este numero de registro ya existe, registre al usuario con otro numero.');
+				
+				writeln();
+				writeln('Presione Enter para continuar');
+				readln();
+				
+				if (CedulaRepe = True) or (RegistroRepe = True) then break;
+			end;
+		until (CedulaRepe = False) and (RegistroRepe = False);
 		AnadirClienteAcom;
 	end;
 
 procedure CrearClienteInd();
+	var
+		Regis, Habi, Estad: string;
+		CedulaRepe, RegistroRepe: boolean;
 	
 	begin
-		clrscr;
-		writeln('Registro numero ',CantidadClientes);
+		
+		repeat
+			Estad := DatosReservacion('Estadia');
+			Habi := DatosReservacion('Habitacion');
+			Regis := DatosReservacion('Registro');
 			
-		write('Ingrese Nombre Completo: ');
-		readln(ListaIndividuales[CantidadClientes].NombreC);
-		write('Ingrese Cedula: ');
-		readln(ListaIndividuales[CantidadClientes].Cedula);
-		write('Ingrese Correo: ');
-		readln(ListaIndividuales[CantidadClientes].Correo);
-		write('Ingrese Telefono: ');
-		readln(ListaIndividuales[CantidadClientes].Telefono);
-		write('Ingrese Dias de Estadia: ');
-		readln(ListaIndividuales[CantidadClientes].Estadia);
-		ListaIndividuales[CantidadClientes].Reservacion := TipoReser;
-		write('Ingrese Tipo de Habitacion: ');
-		readln(ListaIndividuales[CantidadClientes].TipoHabitacion);
-		write('Ingrese Numero de Registro: ');
-		readln(ListaIndividuales[CantidadClientes].NumeroRegistro);
-		
-		writeln();
-		writeln('Presione Enter para continuar');
-		
-		readln();
+			CedulaRepe := False;
+			RegistroRepe := False;
+			clrscr;
+				
+			write('Ingrese Nombre Completo: ');
+			readln(ListaIndividuales[CantidadClientes].NombreC);
+			write('Ingrese Cedula: ');
+			readln(ListaIndividuales[CantidadClientes].Cedula);
+			write('Ingrese Correo: ');
+			readln(ListaIndividuales[CantidadClientes].Correo);
+			write('Ingrese Telefono: ');
+			readln(ListaIndividuales[CantidadClientes].Telefono);
+			ListaIndividuales[CantidadClientes].Reservacion := TipoReser;
+			ListaIndividuales[CantidadClientes].Estadia := Estad;
+			ListaIndividuales[CantidadClientes].TipoHabitacion := Habi;
+			ListaIndividuales[CantidadClientes].NumeroRegistro := Regis;
+			
+			writeln();
+			CedulaRepe := RepetidoInd('Cedula', ListaIndividuales[CantidadClientes].Cedula);
+			RegistroRepe := RepetidoInd('Registro', ListaIndividuales[CantidadClientes].NumeroRegistro);
+			
+			if CedulaRepe = True then writeln('Esta cedula ya se encuentra en el sistema, ingrese un cliente nuevo.');
+			if RegistroRepe = True then writeln('Este numero de registro ya existe, registre al usuario con otro numero.');
+			
+			writeln();
+			writeln('Presione Enter para continuar');
+			readln();
+			
+		until (CedulaRepe = False) and (RegistroRepe = False);
 		AnadirClienteInd;
 	end;
 
@@ -369,12 +551,11 @@ procedure MostrarClientesInd();
 		AbrirArchivoInd;
 		if not eof(ArchivoIndividuales) then
 		begin
-			
+			writeln('Datos de los Clientes: ');
 			while not eof(ArchivoIndividuales) do
 			begin
 				read(ArchivoIndividuales, nCliente);
 				
-				writeln('Datos de los Clientes: ');
 				writeln('');
 				write('Numero de Registro: ');
 				writeln(nCliente.NumeroRegistro);
