@@ -287,20 +287,144 @@ function RepetidoInd(Variable, Dato: string): boolean;
 		Close(ArchivoIndividuales);
 	end;
 
+function TiposHabitacion(): string;
+	var
+		x: byte;
+
+	begin
+		writeln('Ingrese Tipo de Habitacion: ');
+		writeln('1- FAMILY ROOM - 200$ por noche');
+		writeln('2- SENCILLA - 60$ por noche');
+		writeln('3- DOBLE - 120$ por noche');
+		writeln('4- SUITE - 300$ por noche');
+		
+		readln(x);
+		
+		case x of
+			1: TiposHabitacion := 'FAMILY ROOM';
+			2: TiposHabitacion := 'SENCILLA';
+			3: TiposHabitacion := 'DOBLE';
+			4: TiposHabitacion := 'SUITE';
+		end;
+	end;
+
 function DatosReservacion(Dato: string): string;
 	var
 		ValorDato: string;
 	begin
 		clrscr;
 		case Dato of
-			'Registro': write('Ingrese Numero de Registro: ');
-			'Habitacion': write('Ingrese Tipo de Habitacion: ');
-			'Estadia': write('Ingrese Dias de Estadia: ');
+			'Registro': 
+			begin
+				write('Ingrese Numero de Registro: ');
+				readln(ValorDato);
+				DatosReservacion := ValorDato;
+			end;
+			'Habitacion':
+			begin
+				DatosReservacion := TiposHabitacion;
+			end;
+			'Estadia':
+			begin
+				write('Ingrese Dias de Estadia: ');
+				readln(ValorDato);
+				DatosReservacion := ValorDato;
+			end;
 		end;
 		
-		readln(ValorDato);
-		DatosReservacion := ValorDato;
 	end;
+	
+procedure FacturaGrup();
+	Var
+		CostoHabitacion: real;
+		Noches: real;
+
+	begin
+		writeln('Factura del Cliente:');
+		writeln('Numero de Registro: ', ListaGrupos[1].NumeroRegistro);
+		writeln('Nombre: ', ListaGrupos[1].NombreC);
+		writeln('Cedula: ', ListaGrupos[1].Cedula);
+		writeln('Telefono: ', ListaGrupos[1].Telefono);
+		writeln('Reservacion: ', ListaGrupos[1].Reservacion);
+		writeln('Estadia: ', ListaGrupos[1].Estadia);
+		writeln('Habitacion: ', ListaGrupos[1].TipoHabitacion);
+		case ListaGrupos[1].TipoHabitacion of
+			'FAMILY ROOM': CostoHabitacion := 200;
+			'SENCILLA': CostoHabitacion := 60;
+			'DOBLE': CostoHabitacion := 120;
+			'SUITE': CostoHabitacion := 300;
+		end;
+		
+		Noches:= StrToFloat(ListaGrupos[1].Estadia);
+		
+		writeln('Costo Total : ', (CostoHabitacion*Noches):0:2);
+			
+		writeln();
+		writeln('Presione Enter para continuar');
+		readln();
+	end;
+
+	
+procedure FacturaAcom();
+	Var
+		CostoHabitacion: real;
+		Noches: real;
+
+	begin
+		writeln('Factura del Cliente:');
+		writeln('Numero de Registro: ', ListaAcompanyados[1].NumeroRegistro);
+		writeln('Nombre: ', ListaAcompanyados[1].NombreC);
+		writeln('Cedula: ', ListaAcompanyados[1].Cedula);
+		writeln('Telefono: ', ListaAcompanyados[1].Telefono);
+		writeln('Reservacion: ', ListaAcompanyados[1].Reservacion);
+		writeln('Estadia: ', ListaAcompanyados[1].Estadia);
+		writeln('Habitacion: ', ListaAcompanyados[1].TipoHabitacion);
+		case ListaAcompanyados[1].TipoHabitacion of
+			'FAMILY ROOM': CostoHabitacion := 200;
+			'SENCILLA': CostoHabitacion := 60;
+			'DOBLE': CostoHabitacion := 120;
+			'SUITE': CostoHabitacion := 300;
+		end;
+		
+		Noches:= StrToFloat(ListaAcompanyados[1].Estadia);
+		
+		writeln('Costo Total : ', (CostoHabitacion*Noches):0:2);
+			
+		writeln();
+		writeln('Presione Enter para continuar');
+		readln();
+	end;
+
+procedure FacturaInd();
+	Var
+		CostoHabitacion: real;
+		Noches: real;
+
+	begin
+		writeln('Factura del Cliente:');
+		writeln('Numero de Registro: ', ListaIndividuales[CantidadClientes].NumeroRegistro);
+		writeln('Nombre: ', ListaIndividuales[CantidadClientes].NombreC);
+		writeln('Cedula: ', ListaIndividuales[CantidadClientes].Cedula);
+		writeln('Telefono: ', ListaIndividuales[CantidadClientes].Telefono);
+		writeln('Reservacion: ', ListaIndividuales[CantidadClientes].Reservacion);
+		writeln('Estadia: ', ListaIndividuales[CantidadClientes].Estadia);
+		writeln('Habitacion: ', ListaIndividuales[CantidadClientes].TipoHabitacion);
+		case ListaIndividuales[CantidadClientes].TipoHabitacion of
+			'FAMILY ROOM': CostoHabitacion := 200;
+			'SENCILLA': CostoHabitacion := 60;
+			'DOBLE': CostoHabitacion := 120;
+			'SUITE': CostoHabitacion := 300;
+		end;
+		
+		Noches:= StrToFloat(ListaIndividuales[CantidadClientes].Estadia);
+		
+		writeln('Costo Total : ', (CostoHabitacion*Noches):0:2);
+			
+		writeln();
+		writeln('Presione Enter para continuar');
+		readln();
+	end;
+
 
 procedure CrearClienteGrupo();
 	var
@@ -357,6 +481,7 @@ procedure CrearClienteGrupo();
 			end;
 		until (CedulaRepe = False) and (RegistroRepe = False);
 		AnadirClienteGrup(nRegistros);
+		FacturaGrup;
 	end;
 
 procedure CrearClienteAcom();
@@ -406,6 +531,7 @@ procedure CrearClienteAcom();
 			end;
 		until (CedulaRepe = False) and (RegistroRepe = False);
 		AnadirClienteAcom;
+		FacturaAcom;
 	end;
 
 procedure CrearClienteInd();
@@ -450,6 +576,7 @@ procedure CrearClienteInd();
 			
 		until (CedulaRepe = False) and (RegistroRepe = False);
 		AnadirClienteInd;
+		FacturaInd;
 	end;
 
 
@@ -629,6 +756,8 @@ BEGIN
 		
 		else if Eleccion=3 then
 		begin
+			writeln('Cierre de Sistema..');
+			readln();
 			exit;
 		end;
 		
