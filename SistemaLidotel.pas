@@ -52,7 +52,7 @@ procedure AnadirCliente();
 
 	begin
 		AbrirArchivo;
-		
+		Reset(ArchivoClientes);
 		seek(ArchivoClientes, filesize(ArchivoClientes));
 		write(ArchivoClientes, ListaClientes[CantidadClientes]);
 		Close(ArchivoClientes);
@@ -88,32 +88,57 @@ procedure CrearCliente(nCliente:byte);
 
 procedure MostrarCliente();
 	var
-		i, nCliente:byte;
+		ClienteElegido: string;
+		nCliente: Cliente;
 	
 	begin
 		clrscr;
 		writeln('Que Cliente desea ver?');
-		for i:=1 to (CantidadClientes) do
+		
+		AbrirArchivo;
+		
+		while not eof(ArchivoClientes) do
 		begin
-			writeln(i, ' ', ListaClientes[i].NombreC);
+			read(ArchivoClientes, nCliente);
+			write(nCliente.NombreC, ' ', nCliente.Cedula);
 		end;
-		readln(nCliente);
+		Close(ArchivoClientes);
 		
-		clrscr;
-		writeln('Cliente numero ',nCliente);
-		
-		write('Nombre: ');
-		writeln(ListaClientes[nCliente].NombreC);
-		write('Cedula: ');
-		writeln(ListaClientes[nCliente].Cedula);
-		write('Correo: ');
-		writeln(ListaClientes[nCliente].Correo);
-		write('Telefono: ');
-		writeln(ListaClientes[nCliente].Telefono);
-		write('Dias de Estadia: ');
-		writeln(ListaClientes[nCliente].Estadia);
-		write('Tipo de Habitacion: ');
-		writeln(ListaClientes[nCliente].TipoHabitacion);
+		AbrirArchivo;
+		if not eof(ArchivoClientes) then
+		begin
+			readln(ClienteElegido);
+			
+			while not eof(ArchivoClientes) do
+			begin
+				read(ArchivoClientes, nCliente);
+				
+				if ClienteElegido = nCliente.NombreC then
+					seek(ArchivoClientes, filesize(ArchivoClientes));
+			end;
+			Close(ArchivoClientes);
+			
+			
+			AbrirArchivo;
+			clrscr;
+			
+			writeln('Datos del Cliente: ');
+			writeln('');
+			
+			write('Nombre: ');
+			writeln(nCliente.NombreC);
+			write('Cedula: ');
+			writeln(nCliente.Cedula);
+			write('Correo: ');
+			writeln(nCliente.Correo);
+			write('Telefono: ');
+			writeln(nCliente.Telefono);
+			write('Dias de Estadia: ');
+			writeln(nCliente.Estadia);
+			write('Tipo de Habitacion: ');
+			writeln(nCliente.TipoHabitacion);
+			Close(ArchivoClientes);
+		end;
 		
 		writeln();
 		writeln('Presione Enter para continuar');
