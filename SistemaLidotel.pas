@@ -8,137 +8,391 @@ uses
 	SysUtils;
 	
 type
-	Cliente=record
+	Individual=record
 		NombreC: string;
 		Cedula: string;
 		Correo: string;
 		Telefono: string;
 		Estadia: string;
+		Reservacion: string;
 		TipoHabitacion: string;
+		NumeroRegistro: string;
+		end;
+	Grupo=record
+		NombreC: string;
+		Cedula: string;
+		Correo: string;
+		Telefono: string;
+		NombreNino: string;
+		EdadNino: string;
+		Estadia: string;
+		Reservacion: string;
+		TipoHabitacion: string;
+		NumeroRegistro: string;
 		end;
 
-	RegistrosClientes=array[1..100] of Cliente;
+	RegistrosIndividuales=array[1..100] of Individual;
+	RegistrosAcompanyados=array[1..100] of Individual;
+	RegistrosGrupos=array[1..100] of Grupo;
 	
 	
 var
 	Eleccion, CantidadClientes: byte;
 	
-	NombreArchivo: string;
+	NombreArchivoI, NombreArchivoA, NombreArchivoG, TipoReser: string;
 	
-	ListaClientes: RegistrosClientes;
+	ListaIndividuales: RegistrosIndividuales;
+	ListaAcompanyados: RegistrosAcompanyados;
+	ListaGrupos: RegistrosGrupos;
 	
-	ArchivoClientes: file of Cliente;
+	ArchivoIndividuales: file of Individual;
+	ArchivoAcompanyados: file of Individual;
+	ArchivoGrupos: file of Grupo;
 
 
-Procedure AbrirArchivo();
+
+function TipoReservacion(): string;
+	var
+		EleccionReservacion: byte;
+	begin
+		EleccionReservacion:=0;
+		
+		while (EleccionReservacion <> 1) and (EleccionReservacion <> 2) and (EleccionReservacion <> 3) do
+		begin
+			clrscr;
+			writeln('Elija el tipo de Reservacion');
+			writeln('');
+			writeln('1- Individual');
+			writeln('2- Acompanyado');
+			writeln('3- Grupo/Familia');
+			readln(EleccionReservacion);
+			
+			case EleccionReservacion of
+				1: TipoReservacion:= 'Individual';
+				2: TipoReservacion:= 'Acompanyado';
+				3: TipoReservacion:= 'Grupo';
+			end;
+		end;
+	end;
+	
+	
+procedure AbrirArchivoGrup();
 	var
 		CodigoError: integer;
 
 	begin
-		Assign(ArchivoClientes, NombreArchivo);
+		Assign(ArchivoGrupos, NombreArchivoG);
 		{$I-}
-		Reset(ArchivoClientes);
+		Reset(ArchivoGrupos);
 		CodigoError:=IOResult;
 		{$I+}
 		
 		if CodigoError = 2 then
 		begin
-			Rewrite(ArchivoClientes);
+			Rewrite(ArchivoGrupos);
+		end;
+	end;
+		
+procedure AbrirArchivoAcom();
+	var
+		CodigoError: integer;
+
+	begin
+		Assign(ArchivoAcompanyados, NombreArchivoA);
+		{$I-}
+		Reset(ArchivoAcompanyados);
+		CodigoError:=IOResult;
+		{$I+}
+		if CodigoError = 2 then
+		begin
+			Rewrite(ArchivoAcompanyados);
+		end;
+	end;
+	
+procedure AbrirArchivoInd();
+	var
+		CodigoError: integer;
+
+	begin
+		Assign(ArchivoIndividuales, NombreArchivoI);
+		{$I-}
+		Reset(ArchivoIndividuales);
+		CodigoError:=IOResult;
+		{$I+}
+		if CodigoError = 2 then
+		begin
+			Rewrite(ArchivoIndividuales);
 		end;
 	end;
 	
 	
-procedure AnadirCliente();
-
+procedure AnadirClienteGrup(nPersonas: byte);
+	var
+		i: byte;
+		
 	begin
-		AbrirArchivo;
-		Reset(ArchivoClientes);
-		seek(ArchivoClientes, filesize(ArchivoClientes));
-		write(ArchivoClientes, ListaClientes[CantidadClientes]);
-		Close(ArchivoClientes);
+		AbrirArchivoGrup;
+		for i:=1 to nPersonas do
+		begin
+			seek(ArchivoGrupos, filesize(ArchivoGrupos));
+			write(ArchivoGrupos, ListaGrupos[i]);
+		end;
+		
+		Close(ArchivoGrupos);
 	end;
 	
-procedure CrearCliente(nCliente:byte);
-	//var
+procedure AnadirClienteAcom();
+	var
+		i: byte;
+		
+	begin
+		AbrirArchivoAcom;
+		for i:=1 to 2 do
+		begin
+			seek(ArchivoAcompanyados, filesize(ArchivoAcompanyados));
+			write(ArchivoAcompanyados, ListaAcompanyados[i]);
+		end;
+		
+		Close(ArchivoAcompanyados);
+	end;
+	
+procedure AnadirClienteInd();
+
+	begin
+		AbrirArchivoInd;
+		seek(ArchivoIndividuales, filesize(ArchivoIndividuales));
+		write(ArchivoIndividuales, ListaIndividuales[CantidadClientes]);
+		
+		Close(ArchivoIndividuales);
+	end;
+	
+procedure CrearClienteGrupo();
+	var
+		i, nRegistros: byte;
+	
+	begin
+		write('Ingrese la cantidad de adultos: '); readln(nRegistros);
+		
+		
+		for i:=1 to nRegistros do
+		begin
+			clrscr;
+			writeln('Registro numero ',CantidadClientes);
+			
+			write('Ingrese Nombre Completo: ');
+			readln(ListaGrupos[i].NombreC);
+			write('Ingrese Cedula: ');
+			readln(ListaGrupos[i].Cedula);
+			write('Ingrese Correo: ');
+			readln(ListaGrupos[i].Correo);
+			write('Ingrese Telefono: ');
+			readln(ListaGrupos[i].Telefono);
+			write('Ingrese Nombre del nino: ');
+			readln(ListaGrupos[i].NombreNino);
+			write('Ingrese Edad del nino: ');
+			readln(ListaGrupos[i].EdadNino);
+			write('Ingrese Dias de Estadia: ');
+			readln(ListaGrupos[i].Estadia);
+			ListaGrupos[i].Reservacion := TipoReser;
+			write('Ingrese Tipo de Habitacion: ');
+			readln(ListaGrupos[i].TipoHabitacion);
+			write('Ingrese Numero de Registro: ');
+			readln(ListaGrupos[i].NumeroRegistro);
+			
+			writeln();
+			writeln('Presione Enter para continuar');
+		end;
+		
+		readln();
+		AnadirClienteGrup(nRegistros);
+	end;
+
+procedure CrearClienteAcom();
+	var
+		i: byte;
+	
+	begin
+		for i:=1 to 2 do
+		begin
+			clrscr;
+			writeln('Registro numero ',CantidadClientes);
+			
+			write('Ingrese Nombre Completo: ');
+			readln(ListaAcompanyados[i].NombreC);
+			write('Ingrese Cedula: ');
+			readln(ListaAcompanyados[i].Cedula);
+			write('Ingrese Correo: ');
+			readln(ListaAcompanyados[i].Correo);
+			write('Ingrese Telefono: ');
+			readln(ListaAcompanyados[i].Telefono);
+			write('Ingrese Dias de Estadia: ');
+			readln(ListaAcompanyados[i].Estadia);
+			ListaAcompanyados[i].Reservacion := TipoReser;
+			write('Ingrese Tipo de Habitacion: ');
+			readln(ListaAcompanyados[i].TipoHabitacion);
+			write('Ingrese Numero de Registro: ');
+			readln(ListaAcompanyados[i].NumeroRegistro);
+			
+			writeln();
+			writeln('Presione Enter para continuar');
+		end;
+		
+		readln();
+		AnadirClienteAcom;
+	end;
+
+procedure CrearClienteInd();
 	
 	begin
 		clrscr;
-		writeln('Cliente numero ',nCliente);
-		
+		writeln('Registro numero ',CantidadClientes);
+			
 		write('Ingrese Nombre Completo: ');
-		readln(ListaClientes[nCliente].NombreC);
+		readln(ListaIndividuales[CantidadClientes].NombreC);
 		write('Ingrese Cedula: ');
-		readln(ListaClientes[nCliente].Cedula);
+		readln(ListaIndividuales[CantidadClientes].Cedula);
 		write('Ingrese Correo: ');
-		readln(ListaClientes[nCliente].Correo);
+		readln(ListaIndividuales[CantidadClientes].Correo);
 		write('Ingrese Telefono: ');
-		readln(ListaClientes[nCliente].Telefono);
+		readln(ListaIndividuales[CantidadClientes].Telefono);
 		write('Ingrese Dias de Estadia: ');
-		readln(ListaClientes[nCliente].Estadia);
+		readln(ListaIndividuales[CantidadClientes].Estadia);
+		ListaIndividuales[CantidadClientes].Reservacion := TipoReser;
 		write('Ingrese Tipo de Habitacion: ');
-		readln(ListaClientes[nCliente].TipoHabitacion);
+		readln(ListaIndividuales[CantidadClientes].TipoHabitacion);
+		write('Ingrese Numero de Registro: ');
+		readln(ListaIndividuales[CantidadClientes].NumeroRegistro);
 		
 		writeln();
 		writeln('Presione Enter para continuar');
 		
 		readln();
-		AnadirCliente;
+		AnadirClienteInd;
 	end;
 
 
-procedure MostrarCliente();
+procedure MostrarClientesGrup();
 	var
-		ClienteElegido: string;
-		nCliente: Cliente;
+		nCliente: Grupo;
 	
 	begin
 		clrscr;
-		writeln('Que Cliente desea ver?');
 		
-		AbrirArchivo;
 		
-		while not eof(ArchivoClientes) do
+		AbrirArchivoGrup;
+		if not eof(ArchivoGrupos) then
 		begin
-			read(ArchivoClientes, nCliente);
-			write(nCliente.NombreC, ' ', nCliente.Cedula);
-		end;
-		Close(ArchivoClientes);
-		
-		AbrirArchivo;
-		if not eof(ArchivoClientes) then
-		begin
-			readln(ClienteElegido);
+			writeln('Datos de los Clientes: ');
 			
-			while not eof(ArchivoClientes) do
+			while not eof(ArchivoGrupos) do
 			begin
-				read(ArchivoClientes, nCliente);
+				read(ArchivoGrupos, nCliente);
 				
-				if ClienteElegido = nCliente.NombreC then
-					seek(ArchivoClientes, filesize(ArchivoClientes));
+				writeln('');
+				write('Numero de Registro: ');
+				writeln(nCliente.NumeroRegistro);
+				write('Nombre: ');
+				writeln(nCliente.NombreC);
+				write('Cedula: ');
+				writeln(nCliente.Cedula);
+				write('Correo: ');
+				writeln(nCliente.Correo);
+				write('Telefono: ');
+				writeln(nCliente.Telefono);
+				write('Nino: ');
+				writeln(nCliente.NombreNino);
+				write('Edad: ');
+				writeln(nCliente.EdadNino);
+				write('Dias de Estadia: ');
+				writeln(nCliente.Estadia);
+				write('Tipo de Habitacion: ');
+				writeln(nCliente.TipoHabitacion);
 			end;
-			Close(ArchivoClientes);
-			
-			
-			AbrirArchivo;
-			clrscr;
-			
-			writeln('Datos del Cliente: ');
-			writeln('');
-			
-			write('Nombre: ');
-			writeln(nCliente.NombreC);
-			write('Cedula: ');
-			writeln(nCliente.Cedula);
-			write('Correo: ');
-			writeln(nCliente.Correo);
-			write('Telefono: ');
-			writeln(nCliente.Telefono);
-			write('Dias de Estadia: ');
-			writeln(nCliente.Estadia);
-			write('Tipo de Habitacion: ');
-			writeln(nCliente.TipoHabitacion);
-			Close(ArchivoClientes);
 		end;
+		Close(ArchivoGrupos);
+		
+		writeln();
+		writeln('Presione Enter para continuar');
+		readln();
+	end;
+
+procedure MostrarClientesAcom();
+	var
+		nCliente: Individual;
+	
+	begin
+		clrscr;
+		
+		
+		AbrirArchivoAcom;
+		if not eof(ArchivoAcompanyados) then
+		begin
+			writeln('Datos de los Clientes: ');
+			
+			while not eof(ArchivoAcompanyados) do
+			begin
+				
+				read(ArchivoAcompanyados, nCliente);
+				
+				writeln('');
+				write('Numero de Registro: ');
+				writeln(nCliente.NumeroRegistro);
+				write('Nombre: ');
+				writeln(nCliente.NombreC);
+				write('Cedula: ');
+				writeln(nCliente.Cedula);
+				write('Correo: ');
+				writeln(nCliente.Correo);
+				write('Telefono: ');
+				writeln(nCliente.Telefono);
+				write('Dias de Estadia: ');
+				writeln(nCliente.Estadia);
+				write('Tipo de Habitacion: ');
+				writeln(nCliente.TipoHabitacion);
+			end;
+		end;
+		Close(ArchivoAcompanyados);
+		
+		writeln();
+		writeln('Presione Enter para continuar');
+		readln();
+	end;
+
+procedure MostrarClientesInd();
+	var
+		nCliente: Individual;
+	
+	begin
+		clrscr;
+		
+		
+		AbrirArchivoInd;
+		if not eof(ArchivoIndividuales) then
+		begin
+			
+			while not eof(ArchivoIndividuales) do
+			begin
+				read(ArchivoIndividuales, nCliente);
+				
+				writeln('Datos de los Clientes: ');
+				writeln('');
+				write('Numero de Registro: ');
+				writeln(nCliente.NumeroRegistro);
+				write('Nombre: ');
+				writeln(nCliente.NombreC);
+				write('Cedula: ');
+				writeln(nCliente.Cedula);
+				write('Correo: ');
+				writeln(nCliente.Correo);
+				write('Telefono: ');
+				writeln(nCliente.Telefono);
+				write('Dias de Estadia: ');
+				writeln(nCliente.Estadia);
+				write('Tipo de Habitacion: ');
+				writeln(nCliente.TipoHabitacion);
+			end;
+		end;
+		Close(ArchivoIndividuales);
 		
 		writeln();
 		writeln('Presione Enter para continuar');
@@ -150,31 +404,46 @@ procedure MostrarCliente();
 
 
 BEGIN
-	NombreArchivo:= 'Clientes.dat';
+	NombreArchivoI:= 'ClientesIndividuales.dat';
+	NombreArchivoA:= 'ClientesAcompanyados.dat';
+	NombreArchivoG:= 'ClientesGrupos.dat';
 	CantidadClientes:=0;
 	
-	AbrirArchivo;
-	Close(ArchivoClientes);
+	AbrirArchivoInd;
+	Close(ArchivoIndividuales);
+	AbrirArchivoAcom;
+	Close(ArchivoAcompanyados);
+	AbrirArchivoGrup;
+	Close(ArchivoGrupos);
 	
 	
 	while True do
 	begin
 		clrscr;
 		writeln('1- Anadir Cliente');
-		writeln('2- Ver Cliente');
+		writeln('2- Ver Clientes');
 		writeln('3- Salir');
 		readln(Eleccion);
 		
-		
 		if Eleccion=1 then 
 		begin
+			TipoReser:= TipoReservacion;
 			CantidadClientes:= CantidadClientes+1;
-			CrearCliente(CantidadClientes);
+			case TipoReser of
+				'Individual': CrearClienteInd;
+				'Acompanyado': CrearClienteAcom;
+				'Grupo': CrearClienteGrupo;
+			end;
 		end
 		
 		else if Eleccion=2 then
 		begin
-			MostrarCliente;
+			TipoReser:= TipoReservacion;
+			case TipoReser of
+				'Individual': MostrarClientesInd;
+				'Acompanyado': MostrarClientesAcom;
+				'Grupo': MostrarClientesGrup;
+			end;
 		end
 		
 		else if Eleccion=3 then
